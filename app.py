@@ -1,9 +1,16 @@
 import streamlit as st
+import os
 from openai import OpenAI
 from dialogue_prompts import boy_prompt, girl_prompt
 
-# Load OpenAI Key from Streamlit secrets
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# API 키 불러오기 (1) Streamlit secrets → (2) 환경변수 → (3) 기본값 없음
+api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+
+if not api_key:
+    st.error("❌ OpenAI API 키가 설정되지 않았습니다. `.streamlit/secrets.toml` 또는 환경변수를 확인하세요.")
+    st.stop()
+
+client = OpenAI(api_key=api_key)
 
 st.set_page_config(page_title="사춘기 중재 대화 챗봇", layout="centered")
 
